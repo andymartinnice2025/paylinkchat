@@ -22,14 +22,19 @@
       --radius:      10px;
       --shadow:      0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
     }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    ul, ol { list-style: none; }
+
+    /* Restore list styling inside Cognigy webchat */
+    #webchat ul, [class*="webchat"] ul, [class*="message"] ul { padding-left: 1.5em !important; list-style: disc !important; }
+    #webchat ol, [class*="webchat"] ol, [class*="message"] ol { padding-left: 1.5em !important; list-style: decimal !important; }
+    #webchat li, [class*="webchat"] li, [class*="message"] li { display: list-item !important; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--black); min-height: 100vh; }
 
-
-
-    /* HEADER */
-    header { background: var(--black); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-    header img { height: 28px; }
+    /* PAGE HEADER — use class not element selector to avoid webchat bleed */
+    .page-header { background: var(--black); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .page-header img { height: 28px; }
     .header-badge { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-300); border: 1px solid #333; padding: 4px 10px; border-radius: 20px; }
 
     /* STATUS BAR */
@@ -102,10 +107,10 @@
     .clara-avatar svg { width: 20px; height: 20px; fill: none; stroke: var(--green); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .clara-name { font-size: 14px; font-weight: 600; color: var(--white); }
     .clara-role { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
-    .clara-dot-row { display: flex; align-items: center; gap: 6px; }
+    .clara-dot-row { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
     .clara-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
     .clara-status-text { font-size: 11px; color: var(--gray-500); }
-    .clara-hint { font-size: 12px; color: #555; line-height: 1.5; border-top: 1px solid #1f1f1f; padding-top: 12px; margin-top: 4px; }
+    .clara-hint { font-size: 12px; color: #555; line-height: 1.5; border-top: 1px solid #1f1f1f; padding-top: 12px; }
 
     /* PROGRESS */
     .progress-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
@@ -116,13 +121,13 @@
     .progress-bar-fill { height: 100%; background: var(--green); border-radius: 10px; width: 0%; transition: width .5s cubic-bezier(.4,0,.2,1); }
 
     /* FOOTER */
-    footer { text-align: center; font-size: 11px; color: var(--gray-300); padding: 0 0 28px; }
-    footer span { color: var(--gray-500); }
+    .page-footer { text-align: center; font-size: 11px; color: var(--gray-300); padding: 0 0 28px; }
+    .page-footer span { color: var(--gray-500); }
   </style>
 </head>
 <body>
 
-<header>
+<header class="page-header">
   <img src="https://paylinksolutions.co.uk/wp-content/uploads/2023/09/White-Logo-New-1024x272.png" alt="Paylink" />
   <span class="header-badge">Affordability Intelligence</span>
 </header>
@@ -237,7 +242,6 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <!-- Clara intro card -->
     <div class="clara-card">
       <div class="clara-card-top">
         <div class="clara-avatar">
@@ -255,7 +259,6 @@
       <div class="clara-hint">Clara will guide you through the form. Your answers will populate automatically as each section is confirmed.</div>
     </div>
 
-    <!-- Progress -->
     <div class="progress-card">
       <h4>Form Completion</h4>
       <div class="progress-bar-wrap">
@@ -280,10 +283,10 @@
 
 </div>
 
-<footer>Powered by <span>Paylink Affordability Intelligence</span> &nbsp;·&nbsp; Secured &amp; encrypted &nbsp;·&nbsp; UK GDPR compliant</footer>
+<footer class="page-footer">Powered by <span>Paylink Affordability Intelligence</span> &nbsp;·&nbsp; Secured &amp; encrypted &nbsp;·&nbsp; UK GDPR compliant</footer>
 
 <!-- COGNIGY WEBCHAT WIDGET -->
-<script src="https://cdn.jsdelivr.net/npm/@cognigy/webchat@3/dist/webchat.js"></script>
+<script src="https://github.com/Cognigy/Webchat/releases/latest/download/webchat.js"></script>
 <script>
   initWebchat(
     "https://endpoint-trial.cognigy.ai/3ce6477b7e94de7700c15210556600d5bce1d061e746d71a65d32db0ecc8af50"
@@ -325,10 +328,8 @@
     if (!el) return;
     var display = fmtValue(key, val);
     if (display === null) return;
-
     var tag = el.querySelector('.currency-tag');
     el.classList.add('filling');
-
     setTimeout(function() {
       while (el.firstChild) el.removeChild(el.firstChild);
       el.appendChild(document.createTextNode(display));
@@ -379,13 +380,10 @@
     var income   = INCOME_FIELDS.reduce(function(s,k){ return s + getNum(k); }, 0);
     var outgoing = EXPENDITURE_FIELDS.reduce(function(s,k){ return s + getNum(k); }, 0);
     if (income === 0 && outgoing === 0) return;
-
     var surplus = income - outgoing;
     var gbp = function(n) { return '\u00a3' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-
     document.getElementById('sum-income').textContent    = gbp(income);
     document.getElementById('sum-outgoings').textContent = gbp(outgoing);
-
     var surplusEl = document.getElementById('sum-surplus');
     surplusEl.textContent = (surplus >= 0 ? '+' : '\u2212') + gbp(surplus);
     surplusEl.className   = 'summary-val ' + (surplus >= 0 ? 'green' : 'red');
@@ -400,15 +398,12 @@
   function startListening() {
     setStatus('listening', 'Waiting for Clara — chat with the assistant to begin filling your form\u2026');
     var es = new EventSource(NTFY_URL);
-
     es.addEventListener('message', function(e) {
       try {
         var msg  = JSON.parse(e.data);
         var data = typeof msg.message === 'string' ? JSON.parse(msg.message) : msg.message;
-
         setStatus('updating', 'Receiving data from Clara\u2026');
         mergePayload(data);
-
         var allDone = ALL_FIELDS.every(function(f) { return filled[f]; });
         setTimeout(function() {
           if (allDone) {
@@ -418,7 +413,6 @@
             setStatus('listening', 'Waiting for Clara — continue the conversation to fill remaining fields\u2026');
           }
         }, 800);
-
       } catch(err) {
         console.warn('Could not parse ntfy message:', err);
       }
