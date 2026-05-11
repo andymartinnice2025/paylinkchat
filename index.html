@@ -117,14 +117,12 @@
     footer { text-align: center; font-size: 11px; color: var(--gray-300); padding: 0 0 28px; }
     footer span { color: var(--gray-500); }
 
-    /* Fix Cognigy webchat timestamp bars */
-.webchat-message-row-header,
-.webchat-timestamp,
-[class*="webchat"] hr,
-[class*="webchat"] .divider {
+/* Fix Cognigy webchat message header bars */
+[data-testid="message-header"] {
   background: transparent !important;
-  border-color: var(--gray-100) !important;
-  color: var(--gray-500) !important;
+}
+.message-header {
+  background: transparent !important;
 }
   </style>
 </head>
