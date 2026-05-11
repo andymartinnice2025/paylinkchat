@@ -25,6 +25,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--black); min-height: 100vh; }
 
+
+
     /* HEADER */
     header { background: var(--black); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     header img { height: 28px; }
@@ -281,7 +283,7 @@
 <footer>Powered by <span>Paylink Affordability Intelligence</span> &nbsp;·&nbsp; Secured &amp; encrypted &nbsp;·&nbsp; UK GDPR compliant</footer>
 
 <!-- COGNIGY WEBCHAT WIDGET -->
-<script src="https://github.com/Cognigy/Webchat/releases/latest/download/webchat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cognigy/webchat@3/dist/webchat.js"></script>
 <script>
   initWebchat(
     "https://endpoint-trial.cognigy.ai/3ce6477b7e94de7700c15210556600d5bce1d061e746d71a65d32db0ecc8af50"
